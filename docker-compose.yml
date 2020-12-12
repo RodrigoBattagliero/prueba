@@ -1,0 +1,30 @@
+version: "3.6"
+services:
+  apache:
+    build: './docker/apache/'
+    container_name: prueba_tecnica_boxmotions_apache
+    depends_on:
+      - php
+      - mysql
+    ports:
+      - "8083:80"
+    volumes:
+      - ./app:/var/www/html
+  php:
+    build: './docker/php/'
+    container_name: prueba_tecnica_boxmotions_php
+    depends_on:
+      - mysql
+    volumes:
+      - ./app:/var/www/html
+  mysql:
+    build: './docker/mysql/'
+    container_name: prueba_tecnica_boxmotions_mysql
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=prueba_tecnica_boxmotions_docker
+      - MYSQL_USER=prueba_tecnica_boxmotions
+      - MYSQL_PASSWORD=prueba_tecnica_boxmotions
+      - MYSQL_ROOT_PASSWORD=prueba_tecnica_boxmotions
+    ports:
+      - "3311:3306"
