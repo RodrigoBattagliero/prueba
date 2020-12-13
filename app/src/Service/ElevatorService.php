@@ -13,10 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ElevatorService 
 {
-
-    CONST CRITERIA_ASC = 'ASC';
-    CONST CRITERIA_DESC = 'DESC';
-
     private $em;
     private $floorService;
     private $searchStrategyService;
@@ -35,11 +31,12 @@ class ElevatorService
     /**
      * Devuelve los ascensores filtrados por building.
      * 
+     * @param int $buildingId
+     * 
      * @return Elevator[]|null
      */
-    public function getAllElevator() :?array
+    public function getAllElevator($buildingId) :?array
     {
-        $buildingId = 3;
         $building = $this->em->getRepository(Building::class)->find($buildingId);
         $elevators = $this->em->getRepository(Elevator::class)->findBy(['building' => $building]);
         
@@ -53,13 +50,15 @@ class ElevatorService
      */
     public function requestElevator(ElevatorRequest $model) :?ElevatorResponse
     {
-        /** @var Floor[]|null */
-        $buildingFloor = $this->floorService->getOrderedFloorByBuildingId($model->getBuilding(), self::CRITERIA_ASC);
-        $elevators = $this->em->getRepository(Elevator::class)->findBy(['building' => $model->getBuilding()]);
         $fromFloor = $this->em->getRepository(Floor::class)->find($model->getFloorFrom());
         $toFloor = $this->em->getRepository(Floor::class)->find($model->getFloorTo());
+        $this->validateFloor($fromFloor, $toFloor);
+        
+        /** @var Floor[]|null */
+        $buildingFloor = $this->floorService->getOrderedFloorByBuilding($fromFloor->getBuilding(), Floor::SEARCH_CRITERIA_ASC);
+        $elevators = $this->em->getRepository(Elevator::class)->findBy(['building' => $fromFloor->getBuilding()]);
 
-        $this->initElevator($model->getBuilding(), $elevators);
+        $this->initElevator($fromFloor->getBuilding(), $elevators);
         $closestElevator = $this->searchStrategyService->applySearchStrategy($buildingFloor, $elevators, $fromFloor);
         
         $toOrigin = $this->getPath($fromFloor, $closestElevator);
@@ -100,17 +99,17 @@ class ElevatorService
     public function getPath(Floor $floor, Elevator $elevator)
     {
         if ($elevator->getCurrentFloor()->getPosition() > $floor->getPosition()) {
-            $criteria = self::CRITERIA_DESC;
+            $criteria = Floor::SEARCH_CRITERIA_DESC;
             $fromPosition = $floor->getPosition();
             $toPosition = $elevator->getCurrentFloor()->getPosition();
         } else {
-            $criteria = self::CRITERIA_ASC;
+            $criteria = Floor::SEARCH_CRITERIA_ASC;
             $fromPosition = $elevator->getCurrentFloor()->getPosition();
             $toPosition = $floor->getPosition();
         }
 
-        $orderedFloor = $this->floorService->getOrderedFloorByBuildingId(
-            $floor->getBuilding()->getId(), 
+        $orderedFloor = $this->floorService->getOrderedFloorByBuilding(
+            $floor->getBuilding(), 
             $criteria, 
             $fromPosition, 
             $toPosition
@@ -121,13 +120,12 @@ class ElevatorService
 
     /**
      * @param Elevator[] $elevators
-     * @param int $buildingId
+     * @param Building $building
      * 
      * @return void
      */
-    private function initElevator(int $buildingId, array $elevators) :void
+    private function initElevator(Building $building, array $elevators) :void
     {
-        $building = $this->em->getRepository(Building::class)->find($buildingId);
         $fisrtFloor = $this->floorService->getFirstFloor($building);
 
         foreach ($elevators as $elevator) {
@@ -136,5 +134,22 @@ class ElevatorService
             }
         }
         $this->em->flush();
+    }
+
+    /**
+     * @var Floor $floorFrom
+     * @var Floor $floorTo
+     * 
+     * @return void
+     */
+    private function validateFloor(?Floor $floorFrom, ?Floor $floorTo) :void
+    {
+        $b = false;
+        if (!$floorFrom || 
+            !$floorTo ||
+            $floorFrom->getId() == $floorTo->getId()
+        ) {
+            throw new \Exception("Invalid floor.");
+        }
     }
 }

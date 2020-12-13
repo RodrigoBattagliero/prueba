@@ -20,7 +20,7 @@ final class Version20201212225007 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql("INSERT INTO building (id, name) VALUES (id, 'Edificio Wayne')");
+        $this->addSql("INSERT INTO building (id, name) VALUES (1, 'Edificio Wayne')");
         $this->addSql("INSERT INTO floor (id, name, position, status, building_id) VALUES
             (null, 'Planta baja', 1, 1, (SELECT id FROM building WHERE name = 'Edificio Wayne' LIMIT 1)),
             (null, 'Piso 1', 2, 1, (SELECT id FROM building WHERE name = 'Edificio Wayne' LIMIT 1)),

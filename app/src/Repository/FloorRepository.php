@@ -21,7 +21,7 @@ class FloorRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $buildingId
+     * @param Building $building
      * @param string $criteria
      * @param int|null $fromPosition
      * @param int|null $toPosition
@@ -29,15 +29,15 @@ class FloorRepository extends ServiceEntityRepository
      * @return Floor[]|null
      */
     public function findOrderedFloorByBuildingId(
-        int $buildingId, 
+        Building $building, 
         string $criteria,
         ?int $fromPosition, 
         ?int $toPosition
     ) :?array
     {
         $qb = $this->createQueryBuilder('f')
-            ->where('f.building = :buildingId')
-            ->setParameter('buildingId', $buildingId)
+            ->where('f.building = :building')
+            ->setParameter('building', $building)
             ->orderBy('f.position', $criteria)    
         ;
 

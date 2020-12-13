@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Floor;
+use App\Service\FloorService;
 use App\Model\ElevatorRequest;
 use App\Service\ElevatorService;
 use Symfony\Component\Serializer\Serializer;
@@ -29,13 +31,26 @@ class IndexController extends AbstractController
     }
 
     /**
+     * @Route("/floor")
+     */
+    public function getFloor(
+        FloorService $floorService
+    ): JsonResponse
+    {
+        $defaultId = 1;
+        $response = $floorService->getOrderedFloorByBuildingId($defaultId);
+        return $this->json($response);
+    }
+
+    /**
      * @Route("/elevator/status")
      */
     public function elevatorStatus(
         ElevatorService $elevatorService
     ): JsonResponse
     {
-        $response = $elevatorService->getAllElevator();
+        $defaultId = 1;
+        $response = $elevatorService->getAllElevator($defaultId);
         return $this->json($response);
     }
 

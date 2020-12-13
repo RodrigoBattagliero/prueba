@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Floor
 {
+
+    CONST SEARCH_CRITERIA_ASC = 'ASC';
+    CONST SEARCH_CRITERIA_DESC = 'DESC';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
