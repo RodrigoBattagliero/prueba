@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <link rel="stylesheet" href="css/style.css">
+        <script type="text/javascript" src="./javascript/jquery.min.js"></script>
+        <script type="text/javascript" src="./javascript/javascript.js"></script>
+    </head>
+    <body>
+        <section id="form" >
+            <label for="">Piso origen</label>
+            <input type="hidden" id="building-id" name="buildingId" value="3" />
+            <select name="fromFloor" id="from-floor" >
+            </select>
+            <label for="">Piso destino</label>
+            <select name="toFloor" id="to-floor">
+            </select>
+            <button id="send-request">
+                SOLICITAR 
+            </button>
+        </section>
+            
+        <section id="post-send-request" >
+            <p class="title">Pisos desde origen - llamada</p>
+            <div id="origin-call">
+            </div>
+            <p class="title">Pisos desde llamada - destino</p>
+            <div id="call-destination">
+            </div>
+            <p class="title">Ascensor</p>
+            <div id="elevator">
+            </div>
+            <p class="title">Cantida de pisos recorridos</p>
+            <div id="count">
+            </div>
+        </section>
+
+        <section id="status">
+            <p class="title">Antes de ejecución</p>
+            <div id="before">
+                
+            </div>
+            <p class="title">Después de ejecución</p>
+            <div id="after">
+
+            </div>
+        </section>
+    </body>
+</html>
