@@ -11,3 +11,4 @@ Con eso ya se puede interacturar desde la web con la app.
 
 Se puede acceder a la DB a través del puerto 3311.
 
+**El proyecto fue levantado en ambiente LAMP**
