@@ -28,13 +28,14 @@ class Elevator
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Building::class, inversedBy="elevators")
+     * @ORM\ManyToOne(targetEntity=Building::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $building;
 
     /**
-     * @ORM\OneToOne(targetEntity=Floor::class)
+     * @ORM\ManyToOne(targetEntity=Floor::class)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $currentFloor;
 

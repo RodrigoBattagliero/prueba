@@ -36,4 +36,4 @@ COPY composer.phar ./
 #RUN php -r "unlink('composer-setup.php');"
 RUN cp composer.phar /usr/local/bin/composer
 RUN chmod +x /usr/local/bin/composer 
-#COPY xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

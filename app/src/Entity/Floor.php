@@ -33,7 +33,7 @@ class Floor
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Building::class, inversedBy="floors")
+     * @ORM\ManyToOne(targetEntity=Building::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $building;

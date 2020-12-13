@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Floor;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Building;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Floor|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,58 @@ class FloorRepository extends ServiceEntityRepository
         parent::__construct($registry, Floor::class);
     }
 
-    // /**
-    //  * @return Floor[] Returns an array of Floor objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param int $buildingId
+     * @param string $criteria
+     * @param int|null $fromPosition
+     * @param int|null $toPosition
+     * 
+     * @return Floor[]|null
+     */
+    public function findOrderedFloorByBuildingId(
+        int $buildingId, 
+        string $criteria,
+        ?int $fromPosition, 
+        ?int $toPosition
+    ) :?array
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
+        $qb = $this->createQueryBuilder('f')
+            ->where('f.building = :buildingId')
+            ->setParameter('buildingId', $buildingId)
+            ->orderBy('f.position', $criteria)    
+        ;
+
+        if ($fromPosition) {
+            $qb->andWhere('f.position >= :fromPosition')
+                ->setParameter('fromPosition', $fromPosition)
+            ;
+        }
+
+        if ($toPosition) {
+            $qb->andWhere('f.position <= :toPosition')
+                ->setParameter('toPosition', $toPosition)
+            ;
+        }
+
+        return $qb->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Floor
+    /**
+     * @param Building $building
+     * 
+     * @return Floor|null
+     */
+    public function findFirstFloor(Building $building) :?Floor
     {
         return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
+            ->where('f.building = :building')
+            ->setParameter('building', $building)
+            ->orderBy('f.position', 'ASC')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }
